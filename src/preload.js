@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld("api", {
   copyToClipboard: (text) => ipcRenderer.invoke("copy-to-clipboard", text),
   getConfig: () => ipcRenderer.invoke("get-config"),
   saveConfig: (config) => ipcRenderer.invoke("save-config", config),
+  openExternal: (url) => ipcRenderer.invoke("open-external", url),
 });

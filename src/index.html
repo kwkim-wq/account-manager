@@ -22,7 +22,9 @@
 
     <!-- 2단계: 계정 선택 -->
     <div id="step-account" class="step">
-      <label>조회할 계정을 선택하세요</label>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="🔍  계정 검색..." autocomplete="off">
+      </div>
       <div id="account-list" class="account-list"></div>
     </div>
 
@@ -52,6 +54,12 @@
           <span class="cred-label">비밀번호</span>
           <span id="password-text" class="cred-value">••••••••</span>
           <button id="btn-copy-password" class="btn-icon" title="복사">📋</button>
+        </div>
+        <div class="credential-row" id="url-row" style="display:none">
+          <span class="cred-label">URL</span>
+          <span id="url-text" class="cred-value url-value">—</span>
+          <button id="btn-copy-url" class="btn-icon" title="복사">📋</button>
+          <button id="btn-open-url" class="btn-icon" title="열기">🔗</button>
         </div>
         <div class="timer">
           <div class="timer-bar" id="timer-bar"></div>

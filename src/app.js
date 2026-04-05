@@ -87,19 +87,42 @@ async function init() {
 $("member-select").addEventListener("change", (e) => {
   selectedMember = e.target.value;
   if (selectedMember) {
-    renderAccounts();
+    $("search-input").value = "";
+    renderAccounts("");
     showStep("account");
+    $("search-input").focus();
   }
+});
+
+$("search-input").addEventListener("input", (e) => {
+  renderAccounts(e.target.value.trim());
 });
 
 // --- 2단계: 계정 목록 ---
 
-function renderAccounts() {
+function renderAccounts(query = "") {
   const list = $("account-list");
   list.innerHTML = "";
 
+  const q = query.toLowerCase();
+  const filtered = q
+    ? accounts.filter((acc) =>
+        acc.name.toLowerCase().includes(q) ||
+        acc.category.toLowerCase().includes(q) ||
+        acc.username.toLowerCase().includes(q)
+      )
+    : accounts;
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "text-align:center;color:#555;padding:32px 0;font-size:14px;";
+    empty.textContent = "검색 결과가 없습니다";
+    list.appendChild(empty);
+    return;
+  }
+
   const categories = {};
-  accounts.forEach((acc) => {
+  filtered.forEach((acc) => {
     const cat = acc.category || "기타";
     if (!categories[cat]) categories[cat] = [];
     categories[cat].push(acc);
@@ -182,6 +205,13 @@ function showPassword(credentials) {
   $("username-text").textContent = credentials.username || "—";
   $("password-text").textContent = credentials.password;
 
+  if (credentials.url) {
+    $("url-row").style.display = "flex";
+    $("url-text").textContent = credentials.url;
+  } else {
+    $("url-row").style.display = "none";
+  }
+
   let remaining = 30;
   const bar = $("timer-bar");
   const seconds = $("timer-seconds");
@@ -198,6 +228,7 @@ function showPassword(credentials) {
       clearInterval(passwordTimer);
       $("username-text").textContent = "—";
       $("password-text").textContent = "••••••••";
+      $("url-row").style.display = "none";
       currentCredentials = null;
       showStep("account");
     }
@@ -220,10 +251,25 @@ $("btn-copy-password").addEventListener("click", async () => {
   }
 });
 
+$("btn-copy-url").addEventListener("click", async () => {
+  if (currentCredentials?.url) {
+    await window.api.copyToClipboard(currentCredentials.url);
+    $("btn-copy-url").textContent = "✅";
+    setTimeout(() => ($("btn-copy-url").textContent = "📋"), 2000);
+  }
+});
+
+$("btn-open-url").addEventListener("click", () => {
+  if (currentCredentials?.url) {
+    window.api.openExternal(currentCredentials.url);
+  }
+});
+
 $("btn-back").addEventListener("click", () => {
   if (passwordTimer) clearInterval(passwordTimer);
   $("username-text").textContent = "—";
   $("password-text").textContent = "••••••••";
+  $("url-row").style.display = "none";
   currentCredentials = null;
   showStep("account");
 });

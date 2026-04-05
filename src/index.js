@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, clipboard, net } = require("electron");
+const { app, BrowserWindow, ipcMain, clipboard, net, shell } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
 
@@ -17,7 +17,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 480,
     height: 640,
-    resizable: false,
+    resizable: true,
     titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -107,4 +107,8 @@ ipcMain.handle("copy-to-clipboard", (event, text) => {
     if (clipboard.readText() === text) clipboard.writeText("");
   }, 10000);
   return true;
+});
+
+ipcMain.handle("open-external", (event, url) => {
+  shell.openExternal(url);
 });

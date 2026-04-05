@@ -1,7 +1,7 @@
 {
   "name": "account-manager",
   "productName": "계정관리",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "공용계정 비밀번호 관리",
   "main": "src/index.js",
   "private": true,
